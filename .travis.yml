@@ -1,0 +1,28 @@
+sudo: required
+
+services:
+- docker
+
+env:
+  global:
+  - REGISTRY_USER=kittycashrobot
+  - secure: W1anfYe4Sa9RZ1AeYCA/PlCxWX6bb29tJIJt9YMHDDiOGM9iHhmbfc+o+18fzlvB2hFdZ8zbFoySMuqU5nQXBeZYcrab51gb7siXJ+kOa0Tp+k/QfujmciwzGmwAWEK+1AcFIVWlx/4bvgdBZ9szpw8xudKLftnA70g3j1deQPpR9d1MIzedrHamUH9IR5DMCC+JWrYGpY8Ot+W9caYdWnbQbTlgJQRqzJtZjmdeRp69QZOpyJecK2Ek3qMJzoXLpoaWIxjw0Vbx8PlwiBBM31Pg6B1OdNimIkF35YyC2YHFAp5hLeItJ4C2cftsIK+1ifkMPfF2zyYQq/otOJu3aYPk8/9hRJObMJM9wCny6uE6a6EL7k3J5MZ3oqiGu/Kg/gRNWjeC3nJrtXtAxNTJVjtA49OCcyFEhNWrBKP1sA4tr0HA8yOfLiZqaBPzYl3ABa3prE7SzUY8tnibAYFF+ZLV6id7Q5trEevIFWZ8ICGmssEkr64RH3gW/P04btM7M+HROFZu1L34u3Djy7OxMgBTYfFh1XHULeSSwPc+kV9fZlU1L9cgntFaB3HNPJO/Kf76M8uTbtHF2kD+H26w07XP2XWef5tsvdV5ASU+1u4rKdE5zjLGFNTRlECmnf8a3K5DBtXuVD83dX4eO9+H/32PkdkUtuKJNJLLE2UboHU=
+
+before_script:
+- docker pull kittycash/scoreboard-api || true
+
+script:
+- ./docker-build.sh
+
+after_script:
+- docker images
+
+before_deploy:
+- docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASS"
+
+deploy:
+  provider: script
+  script: "./docker-deploy.sh"
+  on:
+    all_branches: true
+    condition: $TRAVIS_BRANCH =~ ^dev|master$ || $(git tag --points-at HEAD) != ""
