@@ -1,6 +1,7 @@
 FROM kkarczmarczyk/node-yarn
 
-COPY . .
+COPY server.js .
+COPY package.json .
 
 RUN yarn install
 
