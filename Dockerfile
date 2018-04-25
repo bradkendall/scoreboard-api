@@ -2,6 +2,7 @@ FROM kkarczmarczyk/node-yarn
 
 COPY server.js .
 COPY package.json .
+COPY game ./game
 
 RUN yarn install
 
